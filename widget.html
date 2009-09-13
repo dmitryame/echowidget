@@ -29,48 +29,50 @@
     border: 0px;	
   }
 
-  #ewMessageList {
+  .ewMessageList {
 	overflow: auto;
   }
 
-  #ewContainer {
+  .ewContainer {
     border: 1px solid #000000;	
   }
 
   /* Message entry */
 
-  #ewMessageEntry {
+  .ewMessageEntry {
     height: 50px;
     background: #000000;
     color: #FFFFFF;
   }
 
-  #ewMessageEntry form {
+  .ewMessageEntry form {
     padding: 4px;	
   }
 
-  #ewMessageEntry p {
+  .ewMessageEntry p {
     margin: 0px;
     text-align: right;
   }
 
-  #ewMessageEntry textarea {
+  .ewMessageEntry textarea {
     height: 20px;
     padding: 3px 4px 1px 4px;
   }
 
   /* Header */
 
-  #ewHeader {
+  .ewHeader {
     height: 40px;
     background: #666666;
     color: #FFFFFF;
     font-size: 14px;
   }
   
-  #ewHeader .ewInner {
+  .ewHeader .ewInner {
     padding: 4px;	
   }
+
+  /* Connection Status */
 
   .ewConvoStatus
   {
@@ -79,33 +81,36 @@
     float: right;
     display: block;
   }
+
+  .ewStatError, .ewStatOffline
+  {
+    background: #FF0000;	
+  }
+
+  .ewStatOnline
+  {
+    background: #00FF00;	
+  }
+
+  .ewStatAttempt
+  {
+    background: #FFFF00;
+  }
 </style>
-
-<!-- Snatched from EchoWaves code -->
-<script src="http://orbited.echowaves.com:80/static/Orbited.js"></script>
-<script>
-  document.domain = 'www.echowaves.com';
-  Orbited.settings.port = 80;
-  Orbited.settings.hostname = 'orbited.echowaves.com';
-  TCPSocket = Orbited.TCPSocket;
-</script>
-<script src="http://orbited.echowaves.com:80/static/protocols/stomp/stomp.js"></script> 
-
-<!-- TODO: include jQuery or something to make AJAX posting easier! -->
 </head>
 
 <body>
 
 <div id="ewContainer">
-	<div id="ewHeader">
+	<div class="ewHeader">
 		<div class="ewInner">
 		<span class="ewConvoStatus"> </span>
 		<span class="ewConvoName">NAME</span>
 		</div>
 	</div>
-	<div id="ewMessageList">
+	<div class="ewMessageList">
 	</div>
-	<div id="ewMessageEntry">
+	<div class="ewMessageEntry">
 		<form action="#">
 			<textarea cols="37" rows="20" class="ewMessageInput" name="message[message]"></textarea>
 			<p><input name="commit" type="submit" value="Send" /></p>
@@ -119,92 +124,9 @@ var ECHOWAVES_OPTS = {
 	width: 300,
 	height: 300,
 };
-
-(function() {
-
-	var Chat = {
-	  init: function(opts) {
-		// just set div sizes according to config
-		var list = document.getElementById('ewMessageList');
-		
-		list.style.width = opts.width;
-		list.style.height = opts.height - 40 - 50;
-		
-		var container = document.getElementById('ewContainer');
-		
-		container.style.width = opts.width;
-		container.style.height = opts.height;
-		
-		this.OPTS = opts;
-		
-		this.clear();
-	  },
-	
-	  clear: function() {
-	    var list = document.getElementById('ewMessageList');
-	    list.innerHTML = '';
-	  },
-	  
-	  testMessage: function(content) {
-		this.message({name: "", url: ""}, content);
-	  },
-
-	  message: function(user, content) {
-	    var list = document.getElementById('ewMessageList');
-
-	    var el = document.createElement('div');
-	    el.className = "ewMessage";
-	    var avatar = user.gravatar_url ? "<a href=\"" + user.url + "\"><img alt=\"" + user.login + "\" src=\"" + user.gravatar_url + "\"/></a>" : '';
-	    el.innerHTML = "<div class=\"ewAvatar\">" + avatar + "</div><div class=\"ewMessageText\">" + decodeURI(content) + "</div><div class=\"ewClear\"></div>";
-	    list.appendChild(el);
-	  },
-	
-	  connectTo: function(CONV_ID) {
-	    // FIXME: workaround for safari never ending loading issue
-	    var orig_chooseTransport = Orbited.util.chooseTransport; 
-	    Orbited.util.chooseTransport = function() { 
-	      return Orbited.CometTransports.LongPoll;
-	    }
-	    this.testMessage('Connecting...', '');
-
-	 		// set up shell.
-	 		// set up stomp client.
-	 		stomp = new STOMPClient();
-	 		stomp.onopen = function() {
-	 		};
-	 		stomp.onclose = function(code) {
-	 		};
-	 		stomp.onerror = function(error) {
-	 		};
-	 		stomp.onerrorframe = function(frame) {
-	 		};
-	 		stomp.onconnectedframe = function() {
-				stomp.subscribe('CONVERSATION_CHANNEL_' + CONV_ID, {exchange:''});
-	 		};
-	 		stomp.onmessageframe = function(frame) {
-	 		  var json = eval('(' + frame.body + ')');
-	          console.log(json);
-				// this is an actual message for current conversation
-	 			if(frame.headers['destination'].indexOf("CONVERSATION_CHANNEL_") == 0) {
-	 			  Chat.message(json.user, json.message.body);
-	 			}	
-				// this is a notify conversation message
-	 			if(frame.headers['destination'].indexOf("CONVERSATION_NOTIFY_CHANNEL_") == 0) {
-				}
-
-	 		};
-			stomp.connect('localhost', 61613, 'user_', '');
-	  }
-	};
-	
-	Chat.init(ECHOWAVES_OPTS);
-	Chat.clear();
-	Chat.testMessage('Loading...');
-	
-	Chat.connectTo(ECHOWAVES_OPTS.channel);
-
-})();
 </script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js" type="text/javascript"></script>
+<script src="widget.js" type="text/javascript"></script>
 
 </body>
 </html>
