@@ -39,7 +39,7 @@
 
   /* Message entry */
 
-  .ewMessageEntry {
+  .ewFooter {
     height: 50px;
     background: #000000;
     color: #FFFFFF;
@@ -47,6 +47,7 @@
 
   .ewMessageEntry form {
     padding: 4px;	
+    background: #000000;
   }
 
   .ewMessageEntry p {
@@ -55,6 +56,7 @@
   }
 
   .ewMessageEntry textarea {
+	width: 100%;
     height: 20px;
     padding: 3px 4px 1px 4px;
   }
@@ -110,17 +112,22 @@
 	</div>
 	<div class="ewMessageList">
 	</div>
-	<div class="ewMessageEntry">
-		<form action="#">
-			<textarea cols="37" rows="20" class="ewMessageInput" name="message[message]"></textarea>
-			<p><input name="commit" type="submit" value="Send" /></p>
-	    </form>
+	<div class="ewFooter">
+		<div class="ewMessageEntry" style="display: none">
+	    	<form action="#">
+			  <textarea class="ewMessageInput" name="message[message]"></textarea>
+			  <p><input name="commit" type="submit" value="Send" /></p>
+	        </form>
+	    </div>
+	    <div class="ewMessageReadonly">
+		  <p>You are not logged in. <a href="http://www.echowaves.com/">Login here</a></p>
+		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
 var ECHOWAVES_OPTS = {
-	channel: 689,
+	channel: 3,
 	width: 300,
 	height: 300,
 };
