@@ -7,8 +7,22 @@ if (typeof jQuery == 'undefined') {
  (function() {
     var Chat = {
         init: function(opts) {
-            // just set div sizes according to config
             var root = $('#ewContainer');
+
+            if (opts.debug) {
+	            console.log("NEW WIDGET:");
+		        console.log(this);
+            }
+	        
+	        // insert the widget into the page if required
+	        var template = "";
+	        // {WIDGET_LINES}
+	        if (template.length > 0) {
+		       root.replaceWith(template);
+		       root = $('#ewContainer');
+	        }
+	
+            // just set div sizes according to config
             var list = root.children('.ewMessageList');
             var title = root.find('.ewConvoName');
 

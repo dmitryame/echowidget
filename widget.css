@@ -1,0 +1,94 @@
+/* Message list */
+.ewMessage {
+  border-bottom: 1px dashed #cccccc;
+}
+
+.ewMessageText {
+  padding-left: 40px;	
+}
+
+.ewClear {
+  clear: both;
+}
+
+.ewAvatar {
+  font-weight: bold;
+  float: left;
+  padding-right: 12px;
+}
+
+.ewAvatar img {
+  width: 30px;
+  height: 30px;
+  border: 0px;	
+}
+
+.ewMessageList {
+	overflow: auto;
+}
+
+.ewContainer {
+  border: 1px solid #000000;	
+}
+
+/* Message entry */
+
+.ewFooter {
+  height: 50px;
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.ewMessageEntry form {
+  padding: 4px;	
+  background: #000000;
+}
+
+.ewMessageEntry p {
+  margin: 0px;
+  text-align: right;
+}
+
+.ewMessageEntry textarea {
+	width: 100%;
+  height: 20px;
+  padding: 3px 4px 1px 4px;
+}
+
+/* Header */
+
+.ewHeader {
+  height: 40px;
+  background: #666666;
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.ewHeader .ewInner {
+  padding: 4px;	
+}
+
+/* Connection Status */
+
+.ewConvoStatus
+{
+  background: #FFFFFF;
+  padding: 10px;
+  float: right;
+  display: block;
+}
+
+.ewStatError, .ewStatOffline
+{
+  background: #FF0000;	
+}
+
+.ewStatOnline
+{
+  background: #00FF00;	
+}
+
+.ewStatAttempt
+{
+  background: #FFFF00;
+}
