@@ -28,6 +28,7 @@ if (typeof jQuery == 'undefined') {
             this.status = root.find('.ewConvoStatus');
             this.readonly = true;
             this.auth = false;
+            this.connected = false;
 
             this.clear();
             this.setAuth(false);
@@ -124,17 +125,36 @@ if (typeof jQuery == 'undefined') {
         },
 
         setAuth: function(value) {
-            if (value && !this.readonly) {
+            if (value && !this.readonly && this.connected) {
                 // Make sure form is visible
                 this.root.find('.ewMessageEntry').show();
                 this.root.find('.ewMessageReadonly').hide();
             } else {
+                // Set connection status message
+                var statusStr = "";
+                if (!this.connected) {
+                    statusStr = "<p>You are not connected.</p>";
+                } else if (!this.readonly) {
+                    statusStr = "<p>Readonly conversation.</p>";
+                } else if (!this.auth) {
+                    statusStr = "<p>You are not logged in. <a href=\"http://www.echowaves.com/\">Login here</a>.</p>";
+                }
                 // Make sure "please login" / "read only" is visible
                 this.root.find('.ewMessageEntry').hide();
-                this.root.find('.ewMessageReadonly').show();
+                this.root.find('.ewMessageReadonly').html(statusStr).show();
             }
 
             this.auth = value;
+        },
+
+        onConnected: function() {
+	      this.connected = true;
+	      this.setAuth(this.auth);
+        },
+
+        onDisconnected: function() {
+	      this.connected = false;
+	      this.setAuth(this.auth);
         },
 
         message: function(user, content) {
@@ -165,6 +185,7 @@ if (typeof jQuery == 'undefined') {
                     return orig_chooseTransport();
             }
             this.testMessage('Connecting...', '');
+            var didConnect = false;
 
             // set up stomp client.
             stomp = new STOMPClient();
@@ -173,6 +194,7 @@ if (typeof jQuery == 'undefined') {
             };
             stomp.onclose = function(code) {
                 Chat.status.attr('class', 'ewConvoStatus ewStatOffline');
+                Chat.onDisconnected();
             };
             stomp.onerror = function(error) {
                 Chat.status.attr('class', 'ewConvoStatus ewStatError');
@@ -181,7 +203,14 @@ if (typeof jQuery == 'undefined') {
                 Chat.status.attr('class', 'ewConvoStatus ewStatError');
             };
             stomp.onconnectedframe = function() {
-                Chat.testMessage('Connected to "' + Chat.name + '", chat away!', '');
+                if (!didConnect) {
+                    didConnect = true;
+                    Chat.clear();
+                    Chat.testMessage('Connected to "' + Chat.name + '", chat away!', '');
+                } else {
+                    Chat.testMessage('Reconnected', '');
+                }
+                Chat.onConnected();
                 Chat.status.attr('class', 'ewConvoStatus ewStatOnline');
                 stomp.subscribe('CONVERSATION_CHANNEL_' + CONV_ID, {
                     exchange: ''
